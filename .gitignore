@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+data/*.csv
+data/*.zip
+data/*.gz
+results/*.json
+results/*.csv
+!results/.gitkeep
+*.log
+.DS_Store

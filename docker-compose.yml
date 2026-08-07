@@ -1,0 +1,36 @@
+# Self-hosted Neo4j Community, capped to the same resources as CognoDB's
+# advertised free tier (0.5 vCPU / 256MB RAM / 1GB disk), used as a
+# transparent "known baseline" control platform in the comparison.
+#
+# Usage:
+#   docker compose up -d
+#   # wait ~30s for startup, then point SELFHOSTED_* env vars at
+#   # bolt://localhost:7687 (already the .env.example default)
+#
+# NOTE: cgroup RAM/CPU limits constrain the container but Neo4j itself
+# also needs its heap/pagecache sized down to fit -- see NEO4J_dbms_memory
+# settings below. Disk is capped via a size-limited bind-mounted volume;
+# document in the README if your Docker storage driver doesn't enforce
+# the `storage_opt` size limit (not all drivers support it).
+services:
+  neo4j-selfhosted:
+    image: neo4j:5.24-community
+    container_name: cognodb-bench-selfhosted
+    ports:
+      - "7687:7687"
+      - "7474:7474"
+    environment:
+      NEO4J_AUTH: neo4j/benchmarkpass
+      NEO4J_dbms_memory_heap_initial__size: 256m
+      NEO4J_dbms_memory_heap_max__size: 256m
+      NEO4J_dbms_memory_pagecache_size: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1G
+    volumes:
+      - neo4j_data:/data
+
+volumes:
+  neo4j_data:
